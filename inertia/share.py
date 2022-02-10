@@ -2,14 +2,16 @@ import logging
 
 log = logging.getLogger(__name__)
 
+
 def share(request, key, value):
-    request.session.setdefault("share",{})
-    request.session["share"][key]=value
+    request.session.setdefault("share", {})
+    request.session["share"][key] = value
+
 
 # used in pingcrm ...
 def share_flash(request, success=False, error=False, errors=False):
     if success:
-        request.session["success"]=success
+        request.session["success"] = success
     if error:
         request.session["error"] = error
 
@@ -17,9 +19,9 @@ def share_flash(request, success=False, error=False, errors=False):
         request.session["errors"] = errors
 
     # log.info(("share", success, error, errors))
-    share(request, "flash",{'success':success,'error':error})
+    share(request, "flash", {"success": success, "error": error})
     if errors:
-        share(request, "errors",errors)
+        share(request, "errors", errors)
 
 
 def share_auth(request):

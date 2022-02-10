@@ -1,23 +1,14 @@
-import json
-from inspect import signature
-from django.core.exceptions import ImproperlyConfigured
-from django.http.response import HttpResponse, HttpResponseRedirect
-from django.views.generic import View
-from django.views.generic.list import BaseListView
-from django.views.generic.detail import BaseDetailView
-from django.template.response import TemplateResponse
-from django.shortcuts import render
-from django.http import JsonResponse
-from django.middleware import csrf
-from django.urls import get_callable
-from .share import share
-from .version import get_version
-
-from django.views.generic import View
-from django.conf import settings
-from django.core import serializers
-from django.forms.models import model_to_dict
 import logging
+from inspect import signature
+
+from django.conf import settings
+from django.core.exceptions import ImproperlyConfigured
+from django.http import JsonResponse
+from django.http.response import HttpResponse
+from django.shortcuts import render
+from django.urls import get_callable
+
+from .version import get_version
 
 log = logging.getLogger(__name__)
 
@@ -36,12 +27,7 @@ def load_lazy_props(d, request):
 
 def _build_context(component_name, props, version, url):
     context = {
-        "page": {
-            "version": version,
-            'url': url,
-            "component": component_name,
-            "props": props
-        },
+        "page": {"version": version, "url": url, "component": component_name, "props": props},
     }
     return context
 
@@ -74,11 +60,11 @@ def render_inertia(request, component_name, props=None, template_name=None):
     shared = {}
     if hasattr(request, "session"):
         for k, v in request.session.get("share", {}).items():
-            log.debug((k,v))
-            shared[k]=v
+            log.debug((k, v))
+            shared[k] = v
         props.update(shared)
-        request.session['share']['flash'] = {'success': None, 'error': None}
-        request.session['share']['errors'] = {}
+        request.session["share"]["flash"] = {"success": None, "error": None}
+        request.session["share"]["errors"] = {}
 
     for key in ("success", "error", "errors"):
         if hasattr(request, "session") and request.session.get(key):
@@ -86,15 +72,13 @@ def render_inertia(request, component_name, props=None, template_name=None):
 
     # subsequent renders
     inertia_version = get_version()
-    is_version_correct = 'X-Inertia-Version' in request.headers and \
-                         request.headers["X-Inertia-Version"] == str(inertia_version)
+    # is_version_correct = "X-Inertia-Version" in request.headers and request.headers[
+    #     "X-Inertia-Version"
+    # ] == str(inertia_version)
 
     # check if partial reload is requested
     only_props = request.headers.get("X-Inertia-Partial-Data", [])
-    if (
-        only_props
-        and request.headers.get("X-Inertia-Partial-Component", "") == component_name
-    ):
+    if only_props and request.headers.get("X-Inertia-Partial-Component", "") == component_name:
         _props = {}
         for key in props:
             if key in only_props:
@@ -105,19 +89,19 @@ def render_inertia(request, component_name, props=None, template_name=None):
     # lazy load props and make request available to props being lazy loaded
     load_lazy_props(_props, request)
 
-    if 'X-Inertia' in request.headers:
-        response = JsonResponse({
-            "component": component_name,
-            "props": _props,
-            "version": inertia_version,
-            "url": request.get_full_path()
-        })
-        response['X-Inertia'] = True
-        response['Vary'] = 'Accept'
+    if "X-Inertia" in request.headers:
+        response = JsonResponse(
+            {
+                "component": component_name,
+                "props": _props,
+                "version": inertia_version,
+                "url": request.get_full_path(),
+            }
+        )
+        response["X-Inertia"] = True
+        response["Vary"] = "Accept"
         return response
-    context = _build_context(component_name, _props,
-                             inertia_version,
-                             url=request.get_full_path())
+    context = _build_context(component_name, _props, inertia_version, url=request.get_full_path())
     return render(request, inertia_template, context)
 
 
@@ -136,7 +120,6 @@ class InertiaMixin:
     def get_data(self, context):
 
         return context
-
 
     def render_to_response(self, context, **kwargs):
         if self.props is None:

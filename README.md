@@ -2,7 +2,7 @@
 ![Python package](https://github.com/zodman/inertia-django/workflows/Python%20package/badge.svg)
 [![Coverage Status](https://coveralls.io/repos/github/zodman/inertia-django/badge.svg?branch=master)](https://coveralls.io/github/zodman/inertia-django?branch=master)
 
-### TL;DR: 
+### TL;DR:
 
 `inertia-django` connetor gives you the ability to replace 'classic' templates with **Vue / React / Svelte** components.
 - SPA user experience with MPA style development flow.
@@ -19,7 +19,7 @@ based on inertia-laravel.
 
 ### `render_inertia` function
 
-The easiest way to render a Vue component with inertia-django is to use the `render_inertia` function.   
+The easiest way to render a Vue component with inertia-django is to use the `render_inertia` function.
 *Note:* You must  have an `Index.vue` component in your project.
 
 ```python
@@ -55,7 +55,7 @@ def index(request):
     {% js_routes %}
     <script src="{{ STATIC_URL}}dist/app.js" defer></script>
     <link href="{{ STATIC_URL}}dist/app.css" rel="stylesheet" />
-            
+
   </head>
   <body class="font-sans leading-none text-gray-700 antialiased">
     {{ page|json_script:"page" }}
@@ -83,14 +83,14 @@ def event_detail(request, id):
     return render_inertia(request, "Event/Show", props)
 ```
 
-We strongly recommend to use [marshmallow](https://marshmallow.readthedocs.io/en/latest/) 
+We strongly recommend to use [marshmallow](https://marshmallow.readthedocs.io/en/latest/)
 since it has a serializer, validation and  fully compatible with django.
 
 
 ## Client-side setup
 ### Install dependencies
 ```bash
-npm install @inertiajs/inertia @inertiajs/inertia-vue 
+npm install @inertiajs/inertia @inertiajs/inertia-vue
 # extra deps
 npm install parcel-bundler
 ```
@@ -132,14 +132,14 @@ new Vue({
 
 ```
 
-TODO: add why not use resolveComponent dynamic.  
+TODO: add why not use resolveComponent dynamic.
 
 
 ## Routing
 
 ### Generating URLs
 
-For the part of the urls the same functionality as laravel or ziggy is 
+For the part of the urls the same functionality as laravel or ziggy is
 
 *django-js-routes* https://pypi.org/project/django-js-routes/
 
