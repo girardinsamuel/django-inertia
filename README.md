@@ -1,74 +1,34 @@
-# inertia-django conector
-![Python package](https://github.com/zodman/inertia-django/workflows/Python%20package/badge.svg)
-[![Coverage Status](https://coveralls.io/repos/github/zodman/inertia-django/badge.svg?branch=master)](https://coveralls.io/github/zodman/inertia-django?branch=master)
+# django-inertia
 
-### TL;DR:
-
-`inertia-django` connetor gives you the ability to replace 'classic' templates with **Vue / React / Svelte** components.
-- SPA user experience with MPA style development flow.
-- No need for clientside routing, just use `urls.py`.
-- No need for API endpoints, just pass data directly to the props of the client-side component.
-
-based on inertia-laravel.
-
-#### demo project available in this repo: https://github.com/zodman/django-inertia-demo
-#### more on inertia: https://inertiajs.com
+Django server-side new adapter for [Inertia.js](https://inertiajs.com).
 
 
-## Usage
+## Getting Started
 
-### `render_inertia` function
+### Install the package
 
-The easiest way to render a Vue component with inertia-django is to use the `render_inertia` function.
-*Note:* You must  have an `Index.vue` component in your project.
+`pip install django-inertia`
+
+### Configure your project
+
+1. Add the package `django_inertia` to your applications (if you want to use the template tag else
+it's not necessary).
+
+2. Add `InertiaMiddleware` to your project middlewares:
 
 ```python
-from inertia import render_inertia
-
-def index(request):
-    # for function views just use the render_inertia function
-    return render_inertia(
-        request,
-        'Index',
-        props={'title': 'My inertia-django page'},
-        template_name='index.html'
-    )
-```
-
-----
-
-## Server-side setup
-
-### Install dependencies
-
-`pip install inertia-django django-js-routes`
-
-### Root Template
-
-```html+django
-{# templates/base.html #}
-{% load js_routes_tags %}<!DOCTYPE html>
-<html  class="h-full bg-gray-200">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-    {% js_routes %}
-    <script src="{{ STATIC_URL}}dist/app.js" defer></script>
-    <link href="{{ STATIC_URL}}dist/app.css" rel="stylesheet" />
-
-  </head>
-  <body class="font-sans leading-none text-gray-700 antialiased">
-    {{ page|json_script:"page" }}
-    <div id="app">
-    </div>
-  </body>
-</html>
+MIDDLEWARES = [
+  #...,
+  "django_inertia.middleware.InertiaMiddleware",
+]
 ```
 
 ### Creating responses
 
+To create and inertia response you need to use `Inertia.render()` method:
+
 ```python
-from inertia.views import render_inertia
+from django_inertia import Inertia
 
 def event_detail(request, id):
     event = Event.objects.get(pk=id)
@@ -80,68 +40,43 @@ def event_detail(request, id):
             'description': event.description
         }
     }
-    return render_inertia(request, "Event/Show", props)
+    return Inertia.render(request, "Event/Show", props)
 ```
 
-We strongly recommend to use [marshmallow](https://marshmallow.readthedocs.io/en/latest/)
-since it has a serializer, validation and  fully compatible with django.
+### Loading data into your template
 
-
-## Client-side setup
-### Install dependencies
-```bash
-npm install @inertiajs/inertia @inertiajs/inertia-vue
-# extra deps
-npm install parcel-bundler
+```html+django
+{% load inertia_tags %}
+<!DOCTYPE html>
+<html  class="h-full bg-gray-200">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <script src="{{ STATIC_URL}}dist/app.js" defer></script>
+    <link href="{{ STATIC_URL}}dist/app.css" rel="stylesheet" />
+  </head>
+  <body>
+    {% inertia %}
+  </body>
+</html>
 ```
 
-### Initialize app
 
-```javascript
-import { InertiaApp } from '@inertiajs/inertia-vue'
-import Vue from 'vue'
-Vue.use(InertiaApp);
+## Credits
 
-const app = document.getElementById('app');
-// we are getting the initialPage from a rendered json_script
-const page = JSON.parse(document.getElementById("page").textContent);
+Thanks to [Andres Vargas](https://github.com/zodman) for the inspiration on this package. Here is
+the link to its legacy package which seems not be actively maintained anymore:
+[inertia-django](https://github.com/zodman/inertia-django)
 
-import Index from "./Pages/Index";
-import Contacts from "./Pages/Contacts";
-import Organization from "./Pages/Organizations";
-import ContactEdit from "./Pages/Contacts.Edit";
+## Contributing
 
-const pages = {
-  'Login': Login,
-  'Index': Index,
-  'Contacts': Contacts,
-  'Contacts.Edit': ContactEdit,
-}
+<!-- Please read the [Contributing Documentation](CONTRIBUTING.md) here. -->
+TODO
 
-new Vue({
-  render: h => h(InertiaApp, {
-    props: {
-      initialPage: page,
-      resolveComponent: (name) => {
-        console.log("resolveComponent ", name)
-        return pages[name];
-      },
-    },
-  }),
-}).$mount(app)
+## Maintainers
 
-```
+- [Samuel Girardin](https://www.github.com/girardinsamuel)
 
-TODO: add why not use resolveComponent dynamic.
+## License
 
-
-## Routing
-
-### Generating URLs
-
-For the part of the urls the same functionality as laravel or ziggy is
-
-*django-js-routes* https://pypi.org/project/django-js-routes/
-
-# TODO: explain how inertia/middleware.py works
-
+django-inertia is open-sourced software licensed under the [MIT license](LICENSE).

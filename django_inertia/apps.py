@@ -2,4 +2,5 @@ from django.apps import AppConfig
 
 
 class InertiaConfig(AppConfig):
-    name = "inertia"
+    name = "django_inertia"
+    verbose_name = "Django Inertia"

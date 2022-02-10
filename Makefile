@@ -7,7 +7,7 @@ init: ## Install your local environment for first time
 	pip install -r requirements.txt
 	pip install ".[dev]"
 test: ## Run project tests
-	python -m pytest --disable-warnings
+	python -m pytest tests
 lint: ## Run code linting
 	python -m flake8 .
 format: ## Format code with Black
