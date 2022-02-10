@@ -1,5 +1,14 @@
 # django-inertia
 
+<p align="center">
+  <img alt="GitHub Workflow Status (branch)" src="https://img.shields.io/github/workflow/status/girardinsamuel/django-inertia/Test%20Application/2.X">
+  <img src="https://codecov.io/gh/girardinsamuel/django-inertia/branch/2.X/graph/badge.svg?token=7W8Y6UVUAT"/>
+  <img src="https://img.shields.io/badge/python-3.7+-blue.svg" alt="Python Version">
+  <img alt="PyPI" src="https://img.shields.io/pypi/v/django-inertia">
+  <img alt="License" src="https://img.shields.io/github/license/girardinsamuel/django-inertia">
+  <a href="https://github.com/psf/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000.svg"></a>
+</p>
+
 Django server-side new adapter for [Inertia.js](https://inertiajs.com).
 
 
