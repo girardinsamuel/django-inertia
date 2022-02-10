@@ -21,3 +21,6 @@ addopts = "-ra -q"
 testpaths = [
   "tests"
 ]
+env = [
+  "DJANGO_SETTINGS_MODULE = tests.test_app.settings",
+]
