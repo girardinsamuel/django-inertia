@@ -7,11 +7,13 @@ Django server-side new adapter for [Inertia.js](https://inertiajs.com).
 
 ### Install the package
 
-`pip install django-inertia`
+```
+pip install django-inertia
+```
 
 ### Configure your project
 
-1. Add the package `django_inertia` to your applications (if you want to use the template tag else
+1. Add the package `django_inertia` to your project (if you want to use the template tag else
 it's not necessary).
 
 2. Add `InertiaMiddleware` to your project middlewares:
@@ -61,6 +63,20 @@ def event_detail(request, id):
 </html>
 ```
 
+## Full documentation
+
+TODO
+
+```python
+Inertia.share()
+Inertia.render()
+Inertia.version()
+Inertia.get_version()
+Inertia.flush_shared()
+
+Inertia.lazy()
+Inertia.static()
+```
 
 ## Credits
 

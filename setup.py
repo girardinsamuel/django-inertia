@@ -58,6 +58,7 @@ setup(
             "wheel",
             "pytest",
             "pytest-django",
+            "pytest-cov",
             "coverage",
             "bump2version",
         ],
