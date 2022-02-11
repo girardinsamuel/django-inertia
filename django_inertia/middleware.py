@@ -62,4 +62,7 @@ class InertiaMiddleware:
         """Defines the props that are shared by default. Can be overriden."""
         errors = request.session.get("errors", False)
         success = request.session.get("success", False)
+        # remove flash data for next request
+        request.session["errors"] = False
+        request.session["success"] = False
         return {"errors": Inertia.static(errors), "success": Inertia.static(success)}
