@@ -40,7 +40,7 @@ setup(
     # requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
     install_requires=[
-        "django>=3,<4",
+        "django>=3,<5",
         "dotty-dict==1.3.0",
     ],
     python_requires=">=3.7.0",
