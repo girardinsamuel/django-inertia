@@ -7,7 +7,7 @@ class TestInertiaTemplateTag(TestCase):
         rendered = Template("{% load inertia_tags %} {% inertia %}").render(
             Context(
                 {
-                    "page": {
+                    "page__": {
                         "component": "Index",
                         "url": "/",
                         "props": {"message": "Hello"},
@@ -27,7 +27,7 @@ class TestInertiaTemplateTag(TestCase):
         rendered = Template("{% load inertia_tags %} {% inertia 'my_app' %}").render(
             Context(
                 {
-                    "page": {
+                    "page__": {
                         "component": "Index",
                         "url": "/",
                         "props": {"message": "Hello"},

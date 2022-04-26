@@ -5,6 +5,7 @@ __all__ = ["settings"]
 
 class LazySettings:
     INERTIA_ROOT_VIEW = "app.html"
+    INERTIA_PAGE_CONTEXT = "page__"
 
     def __getattribute__(self, name):
         try:
