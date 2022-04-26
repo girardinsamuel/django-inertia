@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="django-inertia",
-    version="1.1.0",
+    version="1.2.0",
     packages=find_packages(),
     description="Server-side Django adapter for Inertia.js",
     long_description=long_description,
