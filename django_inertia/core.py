@@ -43,6 +43,7 @@ class Inertia(object):
             # Put any initialization here.
             cls._instance.options = {
                 "root_view": settings.INERTIA_ROOT_VIEW,
+                "page_context": settings.INERTIA_PAGE_CONTEXT,
             }
             cls._instance.check_config()
 
@@ -56,7 +57,7 @@ class Inertia(object):
             )
 
     @classmethod
-    def render(cls, request, component, props={}, custom_root_view=None):
+    def render(cls, request, component, props={}, view_data={}, custom_root_view=None):
         self = cls()
         page_data = self.get_page_data(request, component, props=props)
 
@@ -65,11 +66,17 @@ class Inertia(object):
             response["X-Inertia"] = True
             response["Vary"] = "Accept"
             return response
+
         template = custom_root_view if custom_root_view else self.options.get("root_view")
+        page_context = self.options.get('page_context')
+
+        page_data = {page_context: page_data} if not view_data else \
+            {**view_data, **{page_context: page_data}}
+
         return render(
             request,
             template,
-            {"page": page_data},
+            page_data,
         )
 
     @classmethod
