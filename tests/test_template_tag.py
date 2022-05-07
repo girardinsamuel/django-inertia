@@ -1,3 +1,5 @@
+import json
+
 from django.template import Context, Template
 from django.test import TestCase
 
@@ -37,3 +39,26 @@ class TestInertiaTemplateTag(TestCase):
             )
         )
         assert 'id="my_app"' in rendered
+
+    def test_data_page_valid_json(self):
+        rendered = Template("{% load inertia_tags %} {% inertia %}").render(
+            Context(
+                {
+                    "page__": {
+                        "component": "Index",
+                        "url": "/",
+                        "props": {"message": "Hello"},
+                        "version": "1",
+                    }
+                }
+            )
+        )
+
+        # Assert that a JSON-parsable string is found in the data-page attr
+        json_parsable_context_string = (
+            '{"component": "Index", "url": "/", "props": {"message": "Hello"}, "version": "1"}'
+        )
+        assert f"data-page='{json_parsable_context_string}'" in rendered
+
+        # Assert that the data-page attr value is a valid JSON string
+        assert type(json.loads(json_parsable_context_string)) == dict
