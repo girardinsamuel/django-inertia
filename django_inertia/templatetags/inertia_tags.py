@@ -8,7 +8,7 @@ register = template.Library()
 
 
 @register.simple_tag(takes_context=True)
-def inertia(context, app_id="app"):
+def inertia(context: template.Context, app_id: str = "app"):
     page = context["page__"]
     return format_html(
         "<div id=\"{}\" data-page='{}'></div>", mark_safe(app_id), mark_safe(json.dumps(page))

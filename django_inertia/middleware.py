@@ -1,14 +1,15 @@
-from django.http import HttpResponseRedirect
+import typing
+from django.http import HttpResponseRedirect, HttpRequest, HttpResponse
 
 from .core import Inertia
 
 
 class InertiaMiddleware:
-    def __init__(self, get_response):
+    def __init__(self, get_response: typing.Callable):
         self.get_response = get_response
         # One-time configuration and initialization.
 
-    def __call__(self, request):
+    def __call__(self, request: HttpRequest):
         # -> Code to be executed for each request before other middlewares and view are called.
         if not Inertia.get_version():
             Inertia.version(self.version(request))
@@ -27,10 +28,10 @@ class InertiaMiddleware:
             response.status_code = 303
         return response
 
-    def is_inertia(self, request):
+    def is_inertia(self, request: HttpRequest):
         return request.headers.get("X-Inertia", False)
 
-    def check_version(self, request, response):
+    def check_version(self, request: HttpRequest, response: HttpResponse):
         """In the event that the assets change, initiate a client-side location visit
         to force an update."""
         if (
@@ -43,7 +44,7 @@ class InertiaMiddleware:
 
         return response
 
-    def version(self, request):
+    def version(self, request: HttpRequest):
         """Determines the current asset version. Can be overriden."""
         # assets_url = config("inertia.public_path")
         # if assets_url:
@@ -58,7 +59,7 @@ class InertiaMiddleware:
         #     return hasher.hexdigest()
         return 1
 
-    def share(self, request):
+    def share(self, request: HttpRequest):
         """Defines the props that are shared by default. Can be overriden."""
         errors = request.session.get("errors", False)
         success = request.session.get("success", False)

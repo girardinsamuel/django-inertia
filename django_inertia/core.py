@@ -1,9 +1,9 @@
 import html
+import typing
 from inspect import signature
-from typing import Any, Callable
 
 from django.core.exceptions import ImproperlyConfigured
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, HttpRequest
 from django.shortcuts import render
 from dotty_dict import dotty
 
@@ -11,7 +11,7 @@ from .props import LazyProp, StaticProp
 from .settings import settings
 
 
-def load_callable_props(d, request):
+def load_callable_props(d: dict, request: HttpRequest):
     for k, v in d.items():
         if isinstance(v, dict):
             load_callable_props(v, request)
@@ -32,10 +32,11 @@ def load_callable_props(d, request):
 
 # Straightforward implementation of the Singleton Pattern
 class Inertia(object):
-    _instance = None
-    shared_props = {}
-    rendered_template = ""
-    _version = ""
+    _instance: typing.Optional['Inertia'] = None
+    shared_props: dict = {}
+    rendered_template: str = ""
+    _version: str = ""
+    options: dict = {}
 
     def __new__(cls):
         if cls._instance is None:
@@ -57,7 +58,12 @@ class Inertia(object):
             )
 
     @classmethod
-    def render(cls, request, component, props={}, view_data={}, custom_root_view=None):
+    def render(cls, request: HttpRequest, component: str, props: typing.Optional[dict] = None,
+               view_data: typing.Optional[dict] = None, custom_root_view: typing.Optional[str] = None):
+        if view_data is None:
+            view_data = {}
+        if props is None:
+            props = {}
         self = cls()
         page_data = self.get_page_data(request, component, props=props)
 
@@ -80,20 +86,20 @@ class Inertia(object):
         )
 
     @classmethod
-    def location(cls, url):
+    def location(cls, url: str):
         response = HttpResponse(status=409)
         response["X-Inertia-Location"] = url
         return response
 
     @staticmethod
-    def lazy(callable: Callable):
+    def lazy(callable: typing.Callable):
         return LazyProp(callable)
 
     @staticmethod
-    def static(value: Any):
+    def static(value: typing.Any):
         return StaticProp(value)
 
-    def get_page_data(self, request, component, props):
+    def get_page_data(self, request: HttpRequest, component: str, props: dict):
         # merge shared props with page props, shared props keys takes precedence
         all_props = {**props, **self.get_shared_props()}
         # get props to use here if partial loading is requested
@@ -110,7 +116,7 @@ class Inertia(object):
 
         return page_data
 
-    def get_shared_props(self, key=None, default=None):
+    def get_shared_props(self, key: typing.Optional[str] = None, default: typing.Optional[str] = None):
         """Get all Inertia shared props or the one with the given key."""
         if key:
             return dotty(self.shared_props, key, default)
@@ -118,7 +124,7 @@ class Inertia(object):
             return self.shared_props
 
     @classmethod
-    def version(cls, version):
+    def version(cls, version: typing.Any):
         self = cls()
         self._version = version
         return self
@@ -133,7 +139,7 @@ class Inertia(object):
         return str(version)
 
     @classmethod
-    def share(cls, key, value=None):
+    def share(cls, key: typing.Union[str, dict], value: typing.Any = None):
         self = cls()
         if isinstance(key, dict):
             self.shared_props = {**self.shared_props, **key}
@@ -144,7 +150,7 @@ class Inertia(object):
     def flush_shared(self):
         self.shared_props = {}
 
-    def get_props_to_use(self, request, all_props, component):
+    def get_props_to_use(self, request: HttpRequest, all_props: dict, component: str):
         """Get props to return to the page:
         - when partial reload, required return 'only' props
         - add adapter props along view props (errors, message, auth ...)"""
@@ -170,6 +176,6 @@ class Inertia(object):
 
         return props
 
-    def get_component(self, component):
+    def get_component(self, component: str):
         # TODO: check if escaping before here is needed
         return html.escape(component)
