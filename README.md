@@ -11,6 +11,9 @@
 
 Django server-side new adapter for [Inertia.js](https://inertiajs.com).
 
+DEPRECATED.
+This project is now supported by Bellawatt: https://github.com/inertiajs/inertia-django
+
 
 ## Getting Started
 
